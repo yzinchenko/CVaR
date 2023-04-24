@@ -17,6 +17,10 @@ import matplotlib.pyplot as plt
 from scipy.stats import lognorm
 from scipy.stats import pareto
 
+# some Gurobi run-time params that seem to give better runs
+LPmethod     = 2
+LPcrossover  = 0
+LPbarconvtol = 1e-8
 
 
 
@@ -124,10 +128,10 @@ def val_t(t,alpha,X,cdfLB,cdfUB,MODEL=None):
     
     # solve
     #model.reset()
-    model.params.logfile = 'gurobi.log'
-    model.params.method = 2
-    model.params.barconvtol = 1e-9
-    model.params.crossover = 0
+    model.params.logfile    = 'gurobi.log'
+    model.params.method     = LPmethod
+    model.params.barconvtol = LPbarconvtol
+    model.params.crossover  = LPcrossover
     model.optimize()
     if model.status == GRB.OPTIMAL:
         val  = t + model.objval/(1-alpha)
@@ -228,17 +232,19 @@ except NameError: userSupplied = None
 # genMethod = 0 or 1 are basic tests, and self-explanatory,and
 # genMethod = 2 0r 3 give log-normal data as in the manuscript
 # genMethod = 4 or 5 is Pareto (latest try)
-alpha = .8#.95
 genMethod = 5
-n = 2#3#2#1
-m = 1000#150#200#5000000
+alpha     = .8
+n         = 2
+m         = 10
+t         = .5 * n
 # to plot the value function over a range of tuse N sample points
-N      = 10
-eps    = 1e-5
-epsStop = 1e2#since average total loss is on the order of 1e6:)
-t = .5 * n
-LPmethod = 2
-LPcorssover = 0
+N       = 10
+# flex factor at t_min and t_max end points
+eps     = 1e-5
+# epigraph scheme termination epsilon
+# since average total loss is on the order of 1e6, this can be relatively high:)
+epsStop = 1e2
+
 
 
 
