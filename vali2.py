@@ -234,8 +234,8 @@ except NameError: userSupplied = None
 # genMethod = 4 or 5 is Pareto (latest try)
 genMethod = 5
 alpha     = .8
-n         = 2
-m         = 10
+n         = 3
+m         = 4
 t         = .5 * n
 # to plot the value function over a range of tuse N sample points
 N       = 10
@@ -243,7 +243,7 @@ N       = 10
 eps     = 1e-5
 # epigraph scheme termination epsilon
 # since average total loss is on the order of 1e6, this can be relatively high:)
-epsStop = 1e2
+epsStop = 1e1
 
 
 
@@ -309,8 +309,10 @@ if (userSupplied is None):
             idx[n-1-j] = 1
             layer      = np.tile(replica,idx)
             cdfLB     *= layer
-            if j < 2:
-                cdfUB = np.maximum(cdfUB, layer)
+            if j == 0:
+                cdfUB = layer
+            elif j == 1:
+                cdfUB = np.minimum(cdfUB, layer)
             else:
                 cdfUB *= layer
     elif genMethod == 4 or genMethod == 5:
@@ -338,8 +340,10 @@ if (userSupplied is None):
             idx[n-1-j] = 1
             layer      = np.tile(replica,idx)
             cdfLB     *= layer
-            if j < 2:
-                cdfUB = np.maximum(cdfUB, layer)
+            if j == 0:
+                cdfUB = layer
+            elif j == 1:
+                cdfUB = np.minimum(cdfUB, layer)
             else:
                 cdfUB *= layer
     # save the X, cdfLB, cdfUB data to a disk
